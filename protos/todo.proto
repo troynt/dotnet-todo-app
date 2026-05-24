@@ -1,0 +1,182 @@
+syntax = "proto3";
+
+package todo;
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Todo.Protos";
+option go_package = "todo/v1;todov1";
+
+// Represents a single task or item in a todo list.
+message TodoItem {
+  string id = 1;
+  string list_id = 2;
+  string title = 3;
+  string description = 4;
+  bool is_completed = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  google.protobuf.Timestamp due_at = 8; // Optional due date
+}
+
+// Represents a collection of TodoItems.
+message TodoList {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+// Service to manage TodoLists and TodoItems.
+service TodoService {
+  // --- TodoList Operations ---
+  rpc CreateTodoList (CreateTodoListRequest) returns (CreateTodoListResponse);
+  rpc GetTodoList (GetTodoListRequest) returns (GetTodoListResponse);
+  rpc UpdateTodoList (UpdateTodoListRequest) returns (UpdateTodoListResponse);
+  rpc DeleteTodoList (DeleteTodoListRequest) returns (DeleteTodoListResponse);
+  rpc ListTodoLists (ListTodoListsRequest) returns (ListTodoListsResponse);
+
+  // --- TodoItem Operations ---
+  rpc CreateTodoItem (CreateTodoItemRequest) returns (CreateTodoItemResponse);
+  rpc GetTodoItem (GetTodoItemRequest) returns (GetTodoItemResponse);
+  rpc UpdateTodoItem (UpdateTodoItemRequest) returns (UpdateTodoItemResponse);
+  rpc DeleteTodoItem (DeleteTodoItemRequest) returns (DeleteTodoItemResponse);
+  rpc ListTodoItems (ListTodoItemsRequest) returns (ListTodoItemsResponse);
+
+  // --- Dashboard Operations ---
+  rpc GetDashboardStats (GetDashboardStatsRequest) returns (GetDashboardStatsResponse);
+}
+
+// --- Request and Response messages ---
+
+message CreateTodoListRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message CreateTodoListResponse {
+  TodoList list = 1;
+}
+
+message GetTodoListRequest {
+  string id = 1;
+}
+
+message GetTodoListResponse {
+  TodoList list = 1;
+}
+
+message UpdateTodoListRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message UpdateTodoListResponse {
+  TodoList list = 1;
+}
+
+message DeleteTodoListRequest {
+  string id = 1;
+}
+
+message DeleteTodoListResponse {
+  bool success = 1;
+}
+
+message ListTodoListsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListTodoListsResponse {
+  repeated TodoList lists = 1;
+  string next_page_token = 2;
+}
+
+message CreateTodoItemRequest {
+  string list_id = 1;
+  string title = 2;
+  string description = 3;
+  google.protobuf.Timestamp due_at = 4;
+}
+
+message CreateTodoItemResponse {
+  TodoItem item = 1;
+}
+
+message GetTodoItemRequest {
+  string id = 1;
+}
+
+message GetTodoItemResponse {
+  TodoItem item = 1;
+}
+
+message UpdateTodoItemRequest {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  bool is_completed = 4;
+  google.protobuf.Timestamp due_at = 5;
+}
+
+message UpdateTodoItemResponse {
+  TodoItem item = 1;
+}
+
+message DeleteTodoItemRequest {
+  string id = 1;
+}
+
+message DeleteTodoItemResponse {
+  bool success = 1;
+}
+
+message ListTodoItemsRequest {
+  string list_id = 1; // Required/Optional filter by list
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListTodoItemsResponse {
+  repeated TodoItem items = 1;
+  string next_page_token = 2;
+}
+
+// --- Dashboard Messages ---
+
+message GetDashboardStatsRequest {
+}
+
+message DashboardStats {
+  int32 total_lists = 1;
+  int32 total_tasks = 2;
+  int32 completed_tasks = 3;
+  int32 overdue_tasks = 4;
+  int32 completion_rate = 5;
+  repeated ListStats list_stats = 6;
+  repeated UpcomingTask upcoming_tasks = 7;
+}
+
+message ListStats {
+  string list_id = 1;
+  string list_name = 2;
+  string list_description = 3;
+  int32 total_tasks = 4;
+  int32 completed_tasks = 5;
+  int32 percent_complete = 6;
+}
+
+message UpcomingTask {
+  string id = 1;
+  string title = 2;
+  string list_name = 3;
+  google.protobuf.Timestamp due_at = 4;
+  string status = 5; // "overdue", "today", "future"
+}
+
+message GetDashboardStatsResponse {
+  DashboardStats stats = 1;
+}
