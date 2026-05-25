@@ -11,9 +11,12 @@ interface TodoItemProps {
   onToggleItem: (item: TodoItemType) => void;
   onStartEdit: (item: TodoItemType) => void;
   onDeleteItem: (itemId: string) => void;
+  isToggling: boolean;
+  isDeleting: boolean;
+  isNew?: boolean;
 }
 
-export function TodoItem({ item, onToggleItem, onStartEdit, onDeleteItem }: TodoItemProps) {
+export function TodoItem({ item, onToggleItem, onStartEdit, onDeleteItem, isToggling, isDeleting, isNew }: TodoItemProps) {
   const dueStatus = getDueDateStatus(item.dueAt);
 
   const getTagColor = () => {
@@ -22,12 +25,15 @@ export function TodoItem({ item, onToggleItem, onStartEdit, onDeleteItem }: Todo
     return "success";
   };
 
+  const highlightStyle: React.CSSProperties = isNew
+    ? { backgroundColor: "rgba(59, 130, 246, 0.2)", animation: "highlight-fade 2.5s ease-out forwards" }
+    : undefined;
+
   return (
     <div
       data-testid={`todo-item-row-${item.id}`}
-      className={`group flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100/70 border border-gray-100 transition-all duration-200 ${
-        item.isCompleted ? "opacity-60" : ""
-      }`}
+      className="group flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100/70 border border-gray-100 transition-all duration-200"
+      style={{ ...highlightStyle, opacity: item.isCompleted ? 0.6 : undefined }}
     >
       <div className="flex items-start gap-3.5 min-w-0 flex-1">
         {/* Ant Design Checkbox */}
@@ -35,6 +41,7 @@ export function TodoItem({ item, onToggleItem, onStartEdit, onDeleteItem }: Todo
           checked={item.isCompleted}
           onChange={() => onToggleItem(item)}
           className="mt-1"
+          disabled={isToggling || item.isCompleted}
           data-testid={testIds.todoItemCheckbox(item.id)}
         />
 
@@ -98,6 +105,7 @@ export function TodoItem({ item, onToggleItem, onStartEdit, onDeleteItem }: Todo
               title="Delete Task"
               data-testid={testIds.todoItemDeleteButton(item.id)}
               onClick={(e) => e.stopPropagation()}
+              disabled={isDeleting}
               className="text-gray-400 hover:text-red-500"
             />
           </Popconfirm>

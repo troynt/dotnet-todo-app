@@ -22,6 +22,8 @@ export function TodosPage() {
     loading: listsLoading,
     handleCreateList,
     handleDeleteList,
+    isCreating: isCreatingList,
+    isDeleting: isDeletingList,
   } = useTodoLists({
     onListCreated: (newId) => navigate(Routes.todoList(newId)),
     onListDeleted: (deletedId, remaining) => {
@@ -51,6 +53,11 @@ export function TodosPage() {
     handleToggleItem,
     handleDeleteItem,
     handleUpdateItem,
+    isCreating,
+    isToggling,
+    isDeleting,
+    isUpdating,
+    isNewItem,
   } = useTodoItems(listId);
 
   // Auto-select first list on load if no list is currently active in the URL
@@ -73,6 +80,8 @@ export function TodosPage() {
         setSelectedListId={(id) => navigate(id ? Routes.todoList(id) : Routes.todos)}
         onCreateList={handleCreateList}
         onDeleteList={handleDeleteList}
+        isCreating={isCreatingList}
+        isDeleting={isDeletingList}
       />
 
       {/* Main Content Area */}
@@ -88,7 +97,7 @@ export function TodosPage() {
             />
 
             {/* Quick Add Todo Item Form */}
-            <AddItemForm onAddItem={handleCreateItem} />
+            <AddItemForm onAddItem={handleCreateItem} isCreating={isCreating} />
 
             {/* Filter and Sort bar */}
             <FilterSortBar
@@ -114,6 +123,9 @@ export function TodosPage() {
                     onToggleItem={handleToggleItem}
                     onStartEdit={setEditingItem}
                     onDeleteItem={handleDeleteItem}
+                    isToggling={isToggling}
+                    isDeleting={isDeleting}
+                    isNew={isNewItem(item.id)}
                   />
                 ))
               )}
@@ -130,6 +142,7 @@ export function TodosPage() {
           item={editingItem}
           onSave={handleUpdateItem}
           onCancel={() => setEditingItem(null)}
+          isUpdating={isUpdating}
         />
       )}
     </div>

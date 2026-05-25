@@ -9,9 +9,10 @@ interface EditDrawerProps {
   item: TodoItem;
   onSave: (vars: { title: string; description: string; dueAtStr: string }) => void;
   onCancel: () => void;
+  isUpdating: boolean;
 }
 
-export function EditDrawer({ item, onSave, onCancel }: EditDrawerProps) {
+export function EditDrawer({ item, onSave, onCancel, isUpdating }: EditDrawerProps) {
   const [form] = Form.useForm();
 
   // Reset form values when item changes
@@ -82,7 +83,15 @@ export function EditDrawer({ item, onSave, onCancel }: EditDrawerProps) {
             <Button onClick={onCancel} size="large" data-testid={testIds.editDrawerCancelButton}>
               Cancel
             </Button>
-            <Button type="primary" htmlType="submit" size="large" style={{ fontWeight: "bold" }} data-testid={testIds.editDrawerSaveButton}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              size="large"
+              style={{ fontWeight: "bold" }}
+              loading={isUpdating}
+              disabled={isUpdating}
+              data-testid={testIds.editDrawerSaveButton}
+            >
               Save Changes
             </Button>
           </Space>

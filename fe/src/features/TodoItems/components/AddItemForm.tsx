@@ -5,9 +5,10 @@ import { testIds } from "../../../shared/testIds";
 
 interface AddItemFormProps {
   onAddItem: (vars: { title: string; description: string; dueAtStr: string }) => void;
+  isCreating: boolean;
 }
 
-export function AddItemForm({ onAddItem }: AddItemFormProps) {
+export function AddItemForm({ onAddItem, isCreating }: AddItemFormProps) {
   const [form] = Form.useForm();
 
   const onFinish = (values: any) => {
@@ -59,6 +60,8 @@ export function AddItemForm({ onAddItem }: AddItemFormProps) {
           htmlType="submit"
           icon={<PlusOutlined />}
           size="middle"
+          loading={isCreating}
+          disabled={isCreating}
           style={{ fontWeight: "bold" }}
           data-testid={testIds.addItemSubmitButton}
         >

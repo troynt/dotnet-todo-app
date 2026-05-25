@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useTransport, createQueryOptions } from "@connectrpc/connect-query";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -19,6 +19,7 @@ export function useTodoItems(selectedListId: string | undefined) {
   const [editingItem, setEditingItem] = useState<TodoItem | null>(null);
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
   const [sortBy, setSortBy] = useState<"created" | "due" | "title">("created");
+  const newItemIdsRef = useRef<Set<string>>(new Set());
 
   const itemsQueryKey = createQueryOptions(
     listTodoItems,
@@ -39,6 +40,11 @@ export function useTodoItems(selectedListId: string | undefined) {
     onSuccess: (res) => {
       console.log("createItemMutation onSuccess res:", res);
       if (res.item) {
+        newItemIdsRef.current.add(res.item!.id);
+        setTimeout(() => {
+          newItemIdsRef.current.delete(res.item!.id);
+        }, 2500);
+
         queryClient.setQueryData(
           itemsQueryKey,
           (old: ListTodoItemsResponse | undefined) => {
@@ -179,6 +185,8 @@ export function useTodoItems(selectedListId: string | undefined) {
       return timeB - timeA;
     });
 
+  const isNewItem = (itemId: string) => newItemIdsRef.current.has(itemId);
+
   return {
     items,
     loading: isLoading,
@@ -196,5 +204,10 @@ export function useTodoItems(selectedListId: string | undefined) {
     handleToggleItem,
     handleDeleteItem,
     handleUpdateItem,
+    isCreating: createItemMutation.isPending,
+    isToggling: toggleItemMutation.isPending,
+    isDeleting: deleteItemMutation.isPending,
+    isUpdating: updateItemMutation.isPending,
+    isNewItem,
   };
 }

@@ -13,6 +13,8 @@ interface SidebarProps {
   setSelectedListId: (id: string | undefined) => void;
   onCreateList: (vars: { name: string; description: string }) => void;
   onDeleteList: (listId: string) => void;
+  isCreating: boolean;
+  isDeleting: boolean;
 }
 
 export function Sidebar({
@@ -22,8 +24,11 @@ export function Sidebar({
   setSelectedListId,
   onCreateList,
   onDeleteList,
+  isCreating,
+  isDeleting,
 }: SidebarProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [deletingListId, setDeletingListId] = useState<string | null>(null);
   const [form] = Form.useForm();
 
   const handleCreateList = () => {
@@ -32,6 +37,12 @@ export function Sidebar({
       form.resetFields();
       setIsModalVisible(false);
     });
+  };
+
+  const handleDeleteListWithState = (listId: string) => {
+    setDeletingListId(listId);
+    onDeleteList(listId);
+    setDeletingListId(null);
   };
 
   return (
@@ -47,6 +58,8 @@ export function Sidebar({
           onClick={() => setIsModalVisible(true)}
           title="Create New List"
           size="small"
+          disabled={isCreating}
+          loading={isCreating}
           data-testid={testIds.sidebarCreateListButton}
         />
       </div>
@@ -94,7 +107,7 @@ export function Sidebar({
                   description="Delete list and all its tasks?"
                   onConfirm={(e) => {
                     e?.stopPropagation();
-                    onDeleteList(list.id);
+                    handleDeleteListWithState(list.id);
                   }}
                   onCancel={(e) => e?.stopPropagation()}
                   okText="Yes"
@@ -108,6 +121,7 @@ export function Sidebar({
                     size="small"
                     onClick={(e) => e.stopPropagation()}
                     data-testid={testIds.sidebarDeleteListButton(list.id)}
+                    disabled={deletingListId === list.id}
                     className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500"
                   />
                 </Popconfirm>
@@ -126,7 +140,7 @@ export function Sidebar({
         okText="Create"
         cancelText="Cancel"
         destroyOnHidden
-        okButtonProps={{ "data-testid": testIds.modalCreateListSubmitButton }}
+        okButtonProps={{ "data-testid": testIds.modalCreateListSubmitButton, disabled: isCreating }}
         cancelButtonProps={{ "data-testid": testIds.modalCreateListCancelButton }}
       >
         <Form form={form} layout="vertical" className="mt-4">

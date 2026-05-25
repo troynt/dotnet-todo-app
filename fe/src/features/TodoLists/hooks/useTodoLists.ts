@@ -75,5 +75,7 @@ export function useTodoLists({ onListCreated, onListDeleted }: UseTodoListsOptio
     loading: isLoading,
     handleCreateList: createListMutation.mutate,
     handleDeleteList,
+    isCreating: createListMutation.isMutating,
+    isDeleting: deleteListMutation.isMutating,
   };
 }

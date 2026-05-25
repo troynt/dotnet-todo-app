@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@keyframes highlight-fade {
+  0% {
+    background-color: rgba(59, 130, 246, 0.2);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
 @layer base {
   body {
     @apply min-w-[320px] min-h-screen relative m-0 w-full block;
