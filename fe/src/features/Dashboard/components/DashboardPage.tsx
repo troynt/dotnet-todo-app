@@ -1,5 +1,5 @@
 import { useQuery } from "@connectrpc/connect-query";
-import { Card, Col, Row, Statistic, Progress, List, Tag, Timeline, Spin, Button } from "antd";
+import { Card, Col, Row, Statistic, Progress, Tag, Timeline, Spin, Button } from "antd";
 import {
   ProjectOutlined,
   CheckCircleOutlined,
@@ -57,7 +57,7 @@ export function DashboardPage() {
               title={<span className="text-gray-500 font-bold uppercase tracking-wider text-xs">Total Lists</span>}
               value={totalLists}
               prefix={<ProjectOutlined style={{ color: "#1677ff", marginRight: "8px" }} />}
-              valueStyle={{ fontWeight: 800 }}
+              styles={{ content: { fontWeight: 800 } }}
             />
           </Card>
         </Col>
@@ -67,7 +67,7 @@ export function DashboardPage() {
               title={<span className="text-gray-500 font-bold uppercase tracking-wider text-xs">Total Tasks</span>}
               value={totalTasks}
               prefix={<CalendarOutlined style={{ color: "#1677ff", marginRight: "8px" }} />}
-              valueStyle={{ fontWeight: 800 }}
+              styles={{ content: { fontWeight: 800 } }}
             />
           </Card>
         </Col>
@@ -78,7 +78,7 @@ export function DashboardPage() {
                 title={<span className="text-gray-500 font-bold uppercase tracking-wider text-xs">Completion Rate</span>}
                 value={`${completionRate}%`}
                 prefix={<CheckCircleOutlined style={{ color: "#52c41a", marginRight: "8px" }} />}
-                valueStyle={{ fontWeight: 800 }}
+                styles={{ content: { fontWeight: 800 } }}
               />
               <Progress
                 type="circle"
@@ -95,7 +95,7 @@ export function DashboardPage() {
               title={<span className="text-gray-500 font-bold uppercase tracking-wider text-xs">Overdue Tasks</span>}
               value={overdueTasks}
               prefix={<ClockCircleOutlined style={{ color: overdueTasks > 0 ? "#ff4d4f" : "#52c41a", marginRight: "8px" }} />}
-              valueStyle={{ color: overdueTasks > 0 ? "#ff4d4f" : undefined, fontWeight: 800 }}
+              styles={{ content: { color: overdueTasks > 0 ? "#ff4d4f" : undefined, fontWeight: 800 } }}
             />
           </Card>
         </Col>
@@ -115,47 +115,38 @@ export function DashboardPage() {
                 No active workspaces. Create a todo list under the Todos section!
               </div>
             ) : (
-              <List
-                itemLayout="horizontal"
-                dataSource={listStats}
-                renderItem={(item) => (
-                  <List.Item
-                    actions={[
-                      <Button
-                        type="link"
-                        icon={<ArrowRightOutlined />}
-                        onClick={() => navigate(Routes.todoList(item.listId))}
-                        data-testid={testIds.dashboardNavigateToList(item.listId)}
-                      />,
-                    ]}
-                  >
-                    <List.Item.Meta
-                      title={
-                        <span style={{ fontWeight: 600, fontSize: "15px" }}>
-                          {item.listName}
+              <ul className="divide-y divide-gray-100">
+                {listStats.map((item) => (
+                  <li key={item.listId} className="flex items-start justify-between gap-4 py-2">
+                    <div className="flex-1 min-w-0">
+                      <span style={{ fontWeight: 600, fontSize: "15px" }}>
+                        {item.listName}
+                      </span>
+                      <div className="flex flex-col gap-1 w-full mt-1.5">
+                        <span style={{ fontSize: "12px", color: "#8c8c8c" }}>
+                          {item.listDescription || "No description provided"}
                         </span>
-                      }
-                      description={
-                        <div className="flex flex-col gap-1 w-full mt-1.5">
-                          <span style={{ fontSize: "12px", color: "#8c8c8c" }}>
-                            {item.listDescription || "No description provided"}
+                        <div className="flex items-center gap-3 mt-1">
+                          <Progress
+                            percent={item.percentComplete}
+                            size="small"
+                            style={{ flex: 1, margin: 0 }}
+                          />
+                          <span style={{ fontSize: "12px", color: "#8c8c8c", fontWeight: 600, minWidth: "fit-content" }}>
+                            {item.completedTasks}/{item.totalTasks} tasks
                           </span>
-                          <div className="flex items-center gap-3 mt-1">
-                            <Progress
-                              percent={item.percentComplete}
-                              size="small"
-                              style={{ flex: 1, margin: 0 }}
-                            />
-                            <span style={{ fontSize: "12px", color: "#8c8c8c", fontWeight: 600, minWidth: "fit-content" }}>
-                              {item.completedTasks}/{item.totalTasks} tasks
-                            </span>
-                          </div>
                         </div>
-                      }
+                      </div>
+                    </div>
+                    <Button
+                      type="link"
+                      icon={<ArrowRightOutlined />}
+                      onClick={() => navigate(Routes.todoList(item.listId))}
+                      data-testid={testIds.dashboardNavigateToList(item.listId)}
                     />
-                  </List.Item>
-                )}
-              />
+                  </li>
+                ))}
+              </ul>
             )}
           </Card>
         </Col>
