@@ -25,7 +25,7 @@ export function TodoItem({ item, onToggleItem, onStartEdit, onDeleteItem, isTogg
     return "success";
   };
 
-  const highlightStyle: React.CSSProperties = isNew
+  const highlightStyle: React.CSSProperties | undefined = isNew
     ? { backgroundColor: "rgba(59, 130, 246, 0.2)", animation: "highlight-fade 2.5s ease-out forwards" }
     : undefined;
 
@@ -41,7 +41,7 @@ export function TodoItem({ item, onToggleItem, onStartEdit, onDeleteItem, isTogg
           checked={item.isCompleted}
           onChange={() => onToggleItem(item)}
           className="mt-1"
-          disabled={isToggling || item.isCompleted}
+          disabled={isToggling}
           data-testid={testIds.todoItemCheckbox(item.id)}
         />
 
