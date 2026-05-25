@@ -31,7 +31,7 @@ builder.Services.AddSingleton(new Meter("todo.backend.metrics", "1.0"));
 builder.Services.AddGrpc();
 
 builder.Services.AddDbContext<TodoDbContext>(options =>
-    options.UseSqlite("Data Source=C:\\work\\Todo2\\be\\todo.db"));
+    options.UseSqlite("Data Source=todo.db"));
 
 builder.Services.AddCors(o => o.AddPolicy("AllowAll", p =>
     p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
