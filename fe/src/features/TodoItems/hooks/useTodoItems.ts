@@ -10,7 +10,7 @@ import {
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import type { TodoItem, ListTodoItemsResponse } from "../../../gen/todo_pb";
 import { useInvalidateDashboardStats } from "../../../shared/hooks/useInvalidateDashboardStats";
-import { sortBy } from "lodash-es";
+import { calculateProgress, applyFilterAndSort } from "../utils/todoItemLogic";
 
 export function useTodoItems(selectedListId: string | undefined) {
   const queryClient = useQueryClient();
@@ -159,31 +159,10 @@ export function useTodoItems(selectedListId: string | undefined) {
   };
 
   // Processing lists statistics
-  const totalCount = items.length;
-  const completedCount = items.filter((i) => i.isCompleted).length;
-  const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const { totalCount, completedCount, progressPercent } = calculateProgress(items);
 
   // Filter & Sort Items
-  const filteredItems = items
-    .filter((i) => {
-      if (filter === "active") return !i.isCompleted;
-      if (filter === "completed") return i.isCompleted;
-      return true;
-    })
-    .sort((a, b) => {
-      if (sortBy === "title") {
-        return a.title.localeCompare(b.title);
-      }
-      if (sortBy === "due") {
-        const timeA = a.dueAt ? Number(a.dueAt.seconds) : Infinity;
-        const timeB = b.dueAt ? Number(b.dueAt.seconds) : Infinity;
-        return timeA - timeB;
-      }
-      // default: created
-      const timeA = a.createdAt ? Number(a.createdAt.seconds) : 0;
-      const timeB = b.createdAt ? Number(b.createdAt.seconds) : 0;
-      return timeB - timeA;
-    });
+  const filteredItems = applyFilterAndSort(items, filter, sortBy);
 
   const isNewItem = (itemId: string) => newItemIdsRef.current.has(itemId);
 
