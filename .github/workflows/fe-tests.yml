@@ -1,0 +1,38 @@
+name: Frontend Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "fe/**"
+      - "protos/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "fe/**"
+      - "protos/**"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: fe
+
+    steps:
+      - uses: actions/checkout@v6.0.2
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2.2.0
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Test
+        run: bun test
