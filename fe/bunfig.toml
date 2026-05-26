@@ -2,3 +2,6 @@
 [serve.static]
 plugins = ["bun-plugin-tailwind"]
 env = "BUN_PUBLIC_*"
+
+[install]
+minimumReleaseAge = 1209600 # only install packages published at least 2 weeks ago.
