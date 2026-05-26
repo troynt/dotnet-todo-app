@@ -14,6 +14,7 @@ A modern todo application built with ASP.NET Core gRPC (backend), React + TypeSc
 ## Project Structure
 
 ```
+├── Todo.sln            # .NET Solution file – links all C# projects
 ├── apphost.cs          # Aspire AppHost – orchestrates all resources
 ├── protos/             # Protobuf definitions (single source of truth for the API)
 │   └── todo.proto
@@ -23,6 +24,7 @@ A modern todo application built with ASP.NET Core gRPC (backend), React + TypeSc
 │   ├── Services/       # gRPC service entry point (TodoServiceImpl)
 │   ├── Shared/         # Mapping extensions, shared validators
 │   └── appsettings.*.json
+├── be.Tests/           # Backend Tests – C# unit & integration tests
 ├── fe/                 # Frontend – React + TypeScript app
 │   ├── src/
 │   │   ├── gen/        # Auto-generated protobuf/connect types (do not edit)
@@ -95,7 +97,7 @@ cd fe && bun run generate-proto
 | Command | Description |
 |---------|-------------|
 | `dotnet build` | Compile backend + generate C# types from protos |
-| `dotnet test ../be.Tests/be.Tests.csproj` | Run backend C# tests |
+| `dotnet test` | Run backend C# tests (from the root or `be.Tests/` directory) |
 
 ## Resource Endpoints
 
