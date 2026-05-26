@@ -95,6 +95,7 @@ cd fe && bun run generate-proto
 | Command | Description |
 |---------|-------------|
 | `dotnet build` | Compile backend + generate C# types from protos |
+| `dotnet test ../be.Tests/be.Tests.csproj` | Run backend C# tests |
 
 ## Resource Endpoints
 
