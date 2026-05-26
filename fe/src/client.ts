@@ -6,14 +6,22 @@
  * thanks to the `@__PURE__` annotations emitted by protoc-gen-es.
  */
 
-import { createClient } from "@connectrpc/connect";
+import { createClient, type Interceptor } from "@connectrpc/connect";
 import { createGrpcWebTransport } from "@connectrpc/connect-web";
+import { devtoolsInterceptor } from "connect-devtools";
 import { TodoService } from "./gen/todo_pb";
+
+const interceptors: Interceptor[] = [];
+
+if (typeof window !== "undefined") {
+  interceptors.push(devtoolsInterceptor);
+}
 
 // The transport talks gRPC-Web back to the Bun server, which reverse-proxies
 // to the ASP.NET backend. Same-origin, so no CORS needed.
 export const transport = createGrpcWebTransport({
   baseUrl: "/",
+  interceptors,
 });
 
 /**
